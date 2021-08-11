@@ -1,27 +1,32 @@
-import 'package:get/get.dart';
+
+import 'package:flutter/material.dart';
 import 'package:grocery/models/productitem.dart';
 import 'package:grocery/models/products.dart';
 
 enum HomeState { normal, cart }
 
-class HomeController extends GetxController {
-  List<ProductItem> cart = [];
-  HomeState homestate = HomeState.normal;
+class HomeController extends ChangeNotifier {
+  HomeState homeState = HomeState.normal;
 
-  changeHomeState(HomeState state) {
-    homestate = state;
+  List<ProductItem> cart = [];
+
+  void changeHomeState(HomeState state) {
+    homeState = state;
+    notifyListeners();
   }
 
-  addProduct(Product product) {
+  void addProductToCart(Product product) {
     for (ProductItem item in cart) {
       if (item.product!.title == product.title) {
         item.increment();
+        notifyListeners();
         return;
       }
     }
     cart.add(ProductItem(product: product));
+    notifyListeners();
   }
 
-  int totalItem() => cart.fold(
+  int totalCartItems() => cart.fold(
       0, (previousValue, element) => previousValue + element.quantity);
 }
